@@ -4,16 +4,17 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-
+const apiKey = process.env.REACT_APP_API_KEY;
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC4ByD4zjHP5QM7oxLyBI3Pzhw2QABWETw",
-  authDomain: "showwcase-edu.firebaseapp.com",
-  projectId: "showwcase-edu",
-  storageBucket: "showwcase-edu.firebasestorage.app",
-  messagingSenderId: "178310088682",
-  appId: "1:178310088682:web:80fe6ac019203c55d9d493",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
+console.log("Firebase API Key:", process.env.REACT_APP_FIREBASE_API_KEY);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
