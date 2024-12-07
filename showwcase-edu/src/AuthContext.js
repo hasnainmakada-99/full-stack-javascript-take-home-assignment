@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -12,22 +12,40 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await axios.get(
+            "http://localhost:5000/api/auth/checkAuth",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setCurrentUser(response.data.user);
+        }
+      } catch (error) {
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => unsubscribe();
+    checkAuth();
   }, []);
 
-  const logout = () => {
-    const auth = getAuth();
-    return signOut(auth);
+  const logout = async () => {
+    try {
+      localStorage.removeItem("token");
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
   };
 
   const value = {
     currentUser,
+    setCurrentUser,
     logout,
   };
 
