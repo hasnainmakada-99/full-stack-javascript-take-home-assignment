@@ -1,45 +1,28 @@
-import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Auth/login";
 import Register from "./components/Auth/Register";
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
-import Home from "./pages/Home";
-import { useAuth } from "./AuthContext";
+import Dashboard from "./components/Pages/Dashboard";
 
-function App() {
-  const { currentUser } = useAuth();
+const App = () => {
+  const isAuthenticated = !!localStorage.getItem("token");
 
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route
-          path="/login"
-          element={currentUser ? <Navigate to="/home" /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={currentUser ? <Navigate to="/home" /> : <Register />}
-        />
-        <Route
           path="/"
-          element={currentUser ? <Navigate to="/home" /> : <Login />}
+          element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />}
         />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
+          path="/dashboard"
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

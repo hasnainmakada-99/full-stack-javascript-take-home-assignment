@@ -1,48 +1,39 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import AuthForm from "../Pages/AuthForm";
+import API from "../../api";
 
 const Register = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const handleRegister = async (form) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          email,
-          password,
-        }
-      );
-      alert("Registered successfully!");
-      navigate("/login");
+      const { data } = await API.post("/auth/register", form);
+      localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.error(`Registration error: ${error.message}`); // Debugging log
-      alert(error.response.data.message || error.message);
+      if (error.response && error.response.status === 409) {
+        alert("User already registered. Please login.");
+      } else if (error.response && error.response.status === 400) {
+        alert("User already registered. Please login.");
+      } else {
+        alert("registration failed");
+      }
     }
   };
 
   return (
-    <>
-      <button onClick={() => navigate("/login")}>Login</button>
-      <form onSubmit={handleRegister}>
-        <h2>Register Yourself Here</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Register</button>
-      </form>
-    </>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Register</h1>
+        <AuthForm title="Register" onSubmit={handleRegister} />
+        <div className="mt-4 text-center">
+          <button
+            className="text-blue-500 hover:underline"
+            onClick={() => (window.location.href = "/login")}
+          >
+            Already have an account? Login
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

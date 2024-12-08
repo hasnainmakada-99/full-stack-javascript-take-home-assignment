@@ -1,50 +1,33 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../AuthContext";
+import React from "react";
+import AuthForm from "../Pages/AuthForm";
+import API from "../../api";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { setCurrentUser } = useAuth(); // Get setCurrentUser from useAuth
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (form) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
-      setCurrentUser(response.data.user); // Set the current user
-      navigate("/home");
+      const { data } = await API.post("/auth/login", form);
+      localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.error(`Login error: ${error.message}`); // Debugging log
-      alert(error.response.data.message || error.message);
+      console.error("Login failed", error.response.data);
     }
   };
 
   return (
-    <>
-      <button onClick={() => navigate("/register")}>Register</button>
-      <form onSubmit={handleLogin}>
-        <h2>Login Yourself Here</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-      </form>
-    </>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
+        <AuthForm title="Login" onSubmit={handleLogin} />
+        <div className="mt-4 text-center">
+          <button
+            className="text-blue-500 hover:underline"
+            onClick={() => (window.location.href = "/register")}
+          >
+            Don't have an account? Register
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
