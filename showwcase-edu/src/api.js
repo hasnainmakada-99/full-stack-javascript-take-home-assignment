@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Backend base URL
+  baseURL: "https://full-stack-javascript-take-home.onrender.com/api", // Backend base URL
 });
 
 // Add token to requests if it exists
